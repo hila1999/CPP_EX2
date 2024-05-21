@@ -1,45 +1,70 @@
-//hila.shamir99@gmail.com  314906983
+# Graph Operations Library
 
-# מטלה 1 - גרפים (Classes and Namespaces)
-function printGraph
-הפונקציה קוראת לפונקציה שבודקת כמה קודקודים יש במטריצה
-לאחר מכן היא עוברת בשני לולאות על כל התאים שיש במטריצה אם התא שונה מ0 היא מוסיפה אותו למספר הצלעות
-אם הגרף הוא לא מכוון אז ספרנו כל צלע פעמיים ולכן היא מחלקת את מספר הצלעות ב2 ומדפיסה את התשובה
+## Overview
+This project extends the functionality of the Graph class implemented in `Graph.cpp`, allowing representation and manipulation of graphs using adjacency matrices. In this task, arithmetic and comparison operators are added to support operations on graphs.
 
-function isConnected
-הפונקציה בודקת אם הגרף קשיר 
-מחזירה 1 אם הגרף קשיר ו0 אם הגרף לא קשיר
-the function called to function dfs from vertex 0
-אם הגרף הוא קשיר אזי ניתן להגיע מכל קודקוד לכל קודקוד
-בפונקציה נאתחל מערך של כל הקודקודים עם הערך FALSE ואז נריץ DFS על כל הקודקודים
-כל קודקוד שנבקר אותו יסומן בTRUE
-אם בסוף הריצה יש קודקוד שלא ביקרנו בו בריצת ה DFS 
-נחזיר FALSE
+## Files Included
+- `algorithms.cpp`
+- `graph.cpp`
+- `graph.hpp`
+- `README.md`
 
-function shortestPath
- הפונקציה משתמשת באלגוריתם Bellman Ford 
- אנחנו עוברים מספר הקודקודים פחות 1 על כל הצלעות ועושים להם relax
- ולאחר מכן אם קיימת דרך לקודקוד היא הדרך הכי קצרה
-  נבדוק אם אין מעגלים שלילים
-   אם אין מחזירים את הדרך ע"י שימוש במערך שמחזיק לכל קודקוד 
-   מי האבא שמצביע עליו בדרך הקצרה ביותר
+## Functionality Added
 
+### Arithmetic Operators
+1. **Addition (+) and Compound Addition (+=):** Performs element-wise addition of two graphs. Both graphs must be of the same size (n x n).
+    ```cpp
+    Graph result = graph1 + graph2;
+    graph1 += graph2;
+    ```
+2. **Unary Plus (+):** Returns a copy of the original graph.
+    ```cpp
+    Graph result = +graph;
+    ```
 
-function isBipartite
-בודקת אם הוא דו צדדי
-תחילה בודקת אם הוא מכוון הופעת אותו ללא מכוון
-מריצה DFS כדי לבדוק אם יש קודקוד שלא ניתן להגיע אליו
-אחרי זה מחלקת את כל קבוצות הקודקודים ל2 קבוצות 
-ומחזירה את הקבוצת אם הוא דו צצדי אם לא מחזירה 0
+### Comparison Operators
+1. **Greater Than (>) and Greater Than or Equal To (>=):** Compares two graphs based on their size and edges.
+    ```cpp
+    if (graph1 > graph2) { /* do something */ }
+    if (graph1 >= graph2) { /* do something */ }
+    ```
+2. **Less Than (<) and Less Than or Equal To (<=):** Compares two graphs based on their size and edges.
+    ```cpp
+    if (graph1 < graph2) { /* do something */ }
+    if (graph1 <= graph2) { /* do something */ }
+    ```
+3. **Equal To (==) and Not Equal To (!=):** Compares two graphs based on their size and edges.
+    ```cpp
+    if (graph1 == graph2) { /* do something */ }
+    if (graph1 != graph2) { /* do something */ }
+    ```
 
-function isContainsCycle
-הפונקציה בודקת אם יש מעגל בגרף
- הפונקציה עוברת על כל קודקודי הגרף ומפעילה עליהם DFS ע"י קריאה לפונקציית ISCYCLIC שהיא מבצעת את הבדיקה עבור כל קודקוד
-אצלנו היא קוראת לפונקציה isCyclic שבודקת אם קיים מעגל שיוצא מהקודקוד הנשלח
+### Other Operators
+1. **Increment (++) and Decrement (--):** Increments or decrements the weights of all edges in the graph by 1.
+    ```cpp
+    ++graph;
+    --graph;
+    ```
+2. **Scalar Multiplication (*=):** Multiplies the weight of all edges in the graph by a scalar integer.
+    ```cpp
+    graph *= 2;
+    ```
+3. **Graph Multiplication (*):** Multiplies two graphs by performing matrix multiplication.
+    ```cpp
+    Graph result = graph1 * graph2;
+    ```
 
+### Output Operator
+1. **Output Operator (<<):** Prints a meaningful representation of the graph.
+    ```cpp
+    cout << graph;
+    ```
 
-function negativeCycle
-הפונקציה בודקת אם יש מעגל שלילי
- הפונקציה משתמשת באלגוריתם Bellman Ford 
-אנחנו מריצים בדיקה על כל הצלעות כמספר הקודקודים פחות 1
-ואז מבצעים עוד בדיקה על כל הקודקודים אם יש שיפור (RELAX) באחד הצלעות נחזיר שקיים מעגל שלילי ונדפיס אותו
+## Implementation Details
+The arithmetic and comparison operators are implemented based on the rules defined for matrices in linear algebra. Graph multiplication is performed using matrix multiplication. Comparison operators consider the size and edges of the graphs.
+
+## How to Use
+1. Include `graph.hpp` and `algorithms.cpp` in your project.
+2. Create instances of the `Graph` class.
+3. Perform desired operations using the implemented operators.
+4. Print or use the graphs as required.
