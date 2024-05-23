@@ -198,88 +198,7 @@ namespace ariel
     {
          return !(*this == other);
     }
-    // bool Graph::isContained(const Graph &other) const
-    // {
-    //    bool isContained = true;
-    //     for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
-    //         for (size_t j = 0; j < adjacencyMatrix[i].size(); ++j) {
-    //             if (adjacencyMatrix[i][j] != 0 && other.adjacencyMatrix[i][j] != 1) {
-    //                 isContained = false;
-    //                 break;
-    //             }
-    //         }
-    //         if (!isContained) break;
-    //     }
-
-    //     return isContained;
-    // }
-    // bool Graph::edgesNumber(const Graph &other) const
-    // {
-    //     int thisEdges = 0;
-    //     int otherEdges = 0;
-    //     for (const auto& row : adjacencyMatrix) {
-    //         for (int val : row) {
-    //             if (val != 0) thisEdges++;
-    //         }
-    //     }
-    //     for (const auto& row : other.adjacencyMatrix) {
-    //         for (int val : row) {
-    //             if (val != 0) otherEdges++;
-    //         }
-    //     }
-
-    //     if (thisEdges != otherEdges) return thisEdges < otherEdges;
-
-    //     // If number of edges is the same, compare the order of the adjacency matrices
-    //     return adjacencyMatrix.size() < other.adjacencyMatrix.size();
-    // }
-//      bool isContained(const Graph &g1, const Graph &g2)
-//     {
-//         // Checking if g1 is contained in g2, we'll go over g1 and check if all the values are in g2
-//         for (size_t i = 0; i < g1.size(); i++)
-//         {
-//             for (size_t j = 0; j < g1.size(); j++)
-//             {
-//                 if (g1.adjacencyMatrix[i][j] != 0 && g2.adjacencyMatrix[i][j] == 0)
-//                 {
-//                     return false;
-//                 }
-//             }
-//         }
-//         return true;
-//     }
-//     bool Graph::operator<(const Graph &other) const
-//          { 
-//             bool result ;
-            
-//              if (this->adjacencyMatrix.size() > other.adjacencyMatrix.size())
-//         {
-//             return false;
-//         }
-//          if (this->adjacencyMatrix.size() < other.adjacencyMatrix.size()){
-//        bool result = isContained(*this, other);
-//     }
-//      if (!result){
-//     // If not contained, compare the number of edges
-//     int thisEdges = 0;
-//     int otherEdges = 0;
-//     for (const auto& row : adjacencyMatrix) {
-//         for (int val : row) {
-//             if (val != 0) thisEdges++;
-//         }
-//     }
-//     for (const auto& row : other.adjacencyMatrix) {
-//         for (int val : row) {
-//             if (val != 0) otherEdges++;
-//         }
-//     }
-
-//     if (thisEdges < otherEdges) return true;
-//     }
-
-//     // If number of edges is the same, compare the order of the adjacency matrices
-//     return false;
-// }
+    
 size_t Graph::countEdges() const
     {
         size_t count = 0;
@@ -297,7 +216,6 @@ size_t Graph::countEdges() const
     }
   bool Graph::operator<(const Graph &other) const
     {
-        // Compare number of edges
         size_t thisEdges = this->countEdges();
         size_t otherEdges = other.countEdges();
         if (thisEdges != otherEdges)
@@ -322,13 +240,10 @@ size_t Graph::countEdges() const
                 }
             }
         }
-
-        // If all else is equal, the graphs are not less than each other
         return false;
     }
 
         
-
     bool Graph::operator<=(const Graph &other) const
     {
         return *this < other || *this == other ;
@@ -436,10 +351,6 @@ size_t Graph::countEdges() const
             }
             os << "]";
             os << "\n";
-            // if (i < n - 1)
-            // {
-            //     os << ", ";
-            // }
         }
         return os;
     }
