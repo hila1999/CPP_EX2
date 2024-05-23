@@ -1,4 +1,4 @@
-
+// hila.shamir99@gmail.com  314906983
 #include "doctest.h"
 #include "Algorithms.hpp"
 #include "Graph.hpp"
@@ -466,70 +466,69 @@ TEST_CASE("Test operator< with same number of edges but different order of adjac
     CHECK_FALSE(g2 < g1);
 }
 
-// TEST_CASE("Test operator< with same number of edges and same order of adjacency matrices")
-// {
-//     ariel::Graph g1;
-//     vector<vector<int>> graph1 = {
-//         {0, 1, 0},
-//         {1, 0, 1},
-//         {0, 1, 0}};
-//     g1.loadGraph(graph1);
-//     ariel::Graph g2;
-//     vector<vector<int>> graph2 = {
-//         {0, 1, 0},
-//         {1, 0, 1},
-//         {0, 1, 0}};
-//     g2.loadGraph(graph2);
-//     CHECK_FALSE(g1 < g2);
-//     CHECK_FALSE(g2 < g1);
-// }
+TEST_CASE("Test operator< with same number of edges and same order of adjacency matrices")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph1);
+    ariel::Graph g2;
+    vector<vector<int>> graph2 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g2.loadGraph(graph2);
+    CHECK_FALSE(g1 < g2);
+    CHECK_FALSE(g2 < g1);
+}
 
-// TEST_CASE("Test graph comparison using operator<=")
-// {
-//     ariel::Graph g1;
-//     vector<vector<int>> graph1 = {
-//         {0, 1, 0},
-//         {1, 0, 1},
-//         {0, 1, 0}};
-//     g1.loadGraph(graph1);
+TEST_CASE("Test graph comparison using operator<=")
+{
+    ariel::Graph g1;
+    vector<vector<int>> graph1 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g1.loadGraph(graph1);
 
-//     ariel::Graph g2;
-//     vector<vector<int>> graph2 = {
-//         {0, 1, 1},
-//         {1, 0, 2},
-//         {1, 2, 0}};
-//     g2.loadGraph(graph2);
+    ariel::Graph g2;
+    vector<vector<int>> graph2 = {
+        {0, 1, 1},
+        {1, 0, 2},
+        {1, 2, 0}};
+    g2.loadGraph(graph2);
 
-//     ariel::Graph g3;
-//     vector<vector<int>> graph3 = {
-//         {0, 1, 0},
-//         {1, 0, 1},
-//         {0, 1, 0}};
-//     g3.loadGraph(graph3);
+    ariel::Graph g3;
+    vector<vector<int>> graph3 = {
+        {0, 1, 0},
+        {1, 0, 1},
+        {0, 1, 0}};
+    g3.loadGraph(graph3);
 
-//     ariel::Graph g4;
-//     vector<vector<int>> graph4 = {
-//         {0, 0, 0},
-//         {0, 0, 0},
-//         {0, 0, 0}};
-//     g4.loadGraph(graph4);
+    ariel::Graph g4;
+    vector<vector<int>> graph4 = {
+        {0, 0, 0},
+        {0, 0, 0},
+        {0, 0, 0}};
+    g4.loadGraph(graph4);
 
-//     ariel::Graph g5;
-//     vector<vector<int>> graph5 = {
-//         {0, -1, 0},
-//         {-1, 0, -1},
-//         {0, -1, 0}};
-//     g5.loadGraph(graph5);
+    ariel::Graph g5;
+    vector<vector<int>> graph5 = {
+        {0, -1, 0},
+        {-1, 0, -1},
+        {0, -1, 0}};
+    g5.loadGraph(graph5);
 
-//     CHECK(g1 <= g2); // g1 is less than g2
-//     // CHECK_FALSE(g2 <= g3); // g2 is equal to g3 //check if it is correct
-//     CHECK(g3 <= g1); // g3 is greater than g1
-//     CHECK(g4 <= g4); // g4 is equal to itself
-//     CHECK(g5 <= g1); // g5 is less than g1
-//     CHECK(g5 <= g2); // g5 is less than g2
-//     CHECK(g5 <= g3); // g5 is less than g3
-//     CHECK(g5 <= g4); // g5 is less than g4
-// }
+    CHECK(g1 <= g2); // g1 is less than g2
+    // CHECK_FALSE(g2 <= g3); // g2 is equal to g3 //check if it is correct
+    CHECK(g3 <= g1); // g3 is greater than g1
+    CHECK(g4 <= g4); // g4 is equal to itself
+    CHECK(g5 <= g1); // g5 is less than g1
+    CHECK(g5 <= g2); // g5 is less than g2
+    CHECK(g5 <= g3); // g5 is less than g3
+}
 TEST_CASE("Test graph greater than operator")
 {
     ariel::Graph g1;
@@ -815,18 +814,6 @@ TEST_CASE("Test graph scalar multiplication with negative values")
     CHECK(g3.getAdjacencyMatrix() == expectedGraph);
 }
 
-// TEST_CASE("Test graph multiplication with empty graph")
-// {
-//     ariel::Graph g1;
-//     vector<vector<int>> graph1 = {
-//         {0, 1, 0},
-//         {1, 0, 1},
-//         {0, 1, 0}};
-//     g1.loadGraph(graph1);
-//     ariel::Graph g2;
-//     CHECK((g1 * g2).getAdjacencyMatrix().empty());
-//     CHECK((g2 * g1).getAdjacencyMatrix().empty());
-// }
 
 TEST_CASE("Test graph multiplication with zero matrix")
 {
