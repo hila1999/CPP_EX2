@@ -19,7 +19,6 @@ namespace ariel {
 
     private:
     static void dfs(const std::vector<std::vector<int> >&, std::vector<bool>&, int);
-    static bool dss( Graph& g, int u, std::vector<int>& parent, std::unordered_set<int>& visited, std::vector<int>& cycle);
     static bool isCyclic(std::vector<bool>& visited,size_t v,  std::vector<bool>& recStack, std::vector<size_t >& parent, const Graph& g, std::vector<size_t>& cycle);  
 
     };
