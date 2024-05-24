@@ -1,5 +1,5 @@
 # Graph Operations Library
-hila.shamir99@עmail.com 314906983
+hila.shamir99@gmail.com 314906983
 ## Overview
 This project extends the functionality of the Graph class implemented in `Graph.cpp`, allowing representation and manipulation of graphs using adjacency matrices. In this task, arithmetic and comparison operators are added to support operations on graphs.
 
