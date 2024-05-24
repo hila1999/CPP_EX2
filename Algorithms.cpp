@@ -1,295 +1,332 @@
-//hila.shamir99@gmail.com  314906983
-#include <vector>
-#include <stack>
-#include <queue>
-#include <unordered_set>
-#include <algorithm>
-#include <iostream>
+// hila.shamir99@gmail.com  314906983
 #include "Graph.hpp"
-#include "Algorithms.hpp"
-#include <climits> // for INT_MAX
-#include <cstddef> // for SIZE_MAX
+#include <iostream>
+#include <stdexcept>
+
 using namespace std;
-using namespace ariel;
-  void Algorithms::dfs(const vector<std::vector<int>>& adjacencyMatrix, vector<bool>& visited, int vertex) {
-    // Mark the current vertex as visited
-    visited[static_cast<std::vector<bool>::size_type>(vertex)] = true;
 
-    // Iterate through all possible vertices to check adjacency
-    for (size_t i = 0; i < adjacencyMatrix[static_cast<std::vector<std::vector<int>>::size_type>(vertex)].size(); ++i) {
-        // If there is an edge to vertex 'i' and it has not been visited yet
-        if (adjacencyMatrix[static_cast<vector<std::vector<int>>::size_type>(vertex)][i] != 0 && !visited[i]) {
-            // Recursively visit the adjacent vertex
-            dfs(adjacencyMatrix, visited, static_cast<int>(i));
+namespace ariel {
+
+    // Loads an adjacency matrix into the graph
+    void Graph::loadGraph(const std::vector<std::vector<int>> &matrix) {
+        if (matrix.empty()) {
+            throw std::invalid_argument("The graph cannot be empty");
         }
+        // Check if the matrix is square
+        size_t size = matrix.size();
+        for (const auto &row : matrix) {
+            if (row.size() != size) {
+                throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
+            }
+        }
+        // If the matrix is square, load it into the adjacencyMatrix
+        this->adjacencyMatrix = matrix;
     }
-}
 
-bool Algorithms::isConnected(const Graph& graph) {
-    // Retrieve the adjacency matrix of the graph
-    const std::vector<std::vector<int>>& adjacencyMatrix = graph.getAdjacencyMatrix();
+    // Prints the graph's adjacency matrix and basic information
+    void Graph::printGraph() const {
+        unsigned int numVertices = static_cast<unsigned int>(adjacencyMatrix.size());
+        int numEdges = 0;
+        // Count the number of edges in the graph
+        for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
+            for (size_t j = 0; j < adjacencyMatrix.size(); ++j) {
+                if (adjacencyMatrix[i][j] != 0) {
+                    numEdges += 1;
+                }
+            }
+        }
+        // If the graph is undirected, each edge is counted twice
+        if (!isDirected()) {
+            numEdges /= 2;
+        }
+        std::cout << "Graph with " << numVertices << " vertices and " << numEdges << " edges." << std::endl;
+    }
 
-    // If the graph is empty (no vertices), it is not connected
-    if (adjacencyMatrix.empty()) {
+    // Checks if the graph is directed
+    bool Graph::isDirected() const {
+        for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
+            for (size_t j = 0; j < adjacencyMatrix[i].size(); ++j) {
+                if (adjacencyMatrix[i][j] != adjacencyMatrix[j][i]) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
-    // Create a vector to track visited vertices, initialized to false
-    std::vector<bool> visited(adjacencyMatrix.size(), false);
-
-    // Start a depth-first search from the first vertex (vertex 0)
-    dfs(adjacencyMatrix, visited, 0);
-
-    // Check if all vertices have been visited
-    if (std::all_of(visited.begin(), visited.end(), [](bool isVisited) { return isVisited; })) {
-        // If all vertices are visited, the graph is connected
-        return true;
-    }
-
-    // If any vertex is not visited, the graph is not connected
-    return false;
-}
-string Algorithms::shortestPath(Graph& graph, int start, int end) {
-    // If the graph is empty, return "-1" indicating no path
-    if(graph.size() == 0) {
-        return "-1";
-    }
-    
-    size_t numOfVer = graph.size(); // Number of vertices in the graph
-    vector<int> dist(numOfVer, INT_MAX); // Initialize distances to all vertices as infinite
-    vector<int> predecessor(numOfVer, -1); // Initialize predecessors for all vertices
-    dist[(size_t)start] = 0; // Distance to the start vertex is 0
-
-    vector<vector<int>> adjacencyMatrix = graph.getAdjMatrix(); // Get the adjacency matrix of the graph
-
-    // Relax all edges numOfVer-1 times
-    for (size_t uar = 0; uar < numOfVer - 1; ++uar) {
-        for (size_t jar = 0; jar < numOfVer; jar++) {
-            for (size_t kar = 0; kar < numOfVer; kar++) {
-                // If there is an edge and the new path is shorter, update the distance and predecessor
-                if (adjacencyMatrix[jar][kar] != 0 && dist[jar] != INT_MAX && dist[jar] + adjacencyMatrix[jar][kar] < dist[kar]) {
-                    dist[kar] = dist[jar] + adjacencyMatrix[jar][kar];
-                    predecessor[kar] = static_cast<int>(jar);
-                }
+    // Returns the neighbors of a given node
+    std::vector<size_t> Graph::getNeighbors(size_t node) const {
+        std::vector<size_t> neighbors;
+        if (node >= adjacencyMatrix.size()) {
+            throw std::out_of_range("Node index out of range");
+        }
+        for (size_t i = 0; i < adjacencyMatrix[node].size(); ++i) {
+            if (adjacencyMatrix[node][i] != 0) {
+                neighbors.push_back(i);
             }
         }
+        return neighbors;
     }
 
-    // Check for negative weight cycles
-    for (size_t jar = 0; jar < numOfVer; jar++) {
-        for (size_t k = 0; k < numOfVer; k++) {
-            if (adjacencyMatrix[jar][k] != 0 && dist[jar] != INT_MAX && dist[jar] + adjacencyMatrix[jar][k] < dist[k]) {
-                return "Negative cycle detected"; // If a cycle is detected, return
-            }
+    // Returns the number of vertices in the graph
+    size_t Graph::size() const {
+        return adjacencyMatrix.size();
+    }
+
+    // Returns the adjacency matrix of the graph
+    std::vector<std::vector<int>> Graph::getAdjMatrix() {
+        return this->adjacencyMatrix;
+    }
+
+    // Checks if two graphs have the same size
+    void Graph::check_same_size(const Graph &other) const {
+        if (adjacencyMatrix.size() != other.adjacencyMatrix.size()) {
+            throw std::invalid_argument("Graphs must be of the same size");
         }
     }
 
-    // If there is no path from start to end
-    if (dist[(size_t)end] == INT_MAX) {
-        return "-1";
-    }
-
-    // Reconstruct the path from end to start using predecessors
-    string path = to_string(end);
-    for (size_t var = (size_t)end; var != start; var = (size_t)predecessor[var]) {
-        path = to_string((int)predecessor[var]) + "->" + path;
-    }
-
-    return path;
-}
-
-std::string Algorithms::isBipartite(const Graph &g) {
-    size_t numNodes = g.size(); // Number of nodes in the graph
-    vector<vector<int>> adjMatrix = g.getAdjacencyMatrix(); // Get adjacency matrix
-
-    // Make the graph undirected if it is directed
-    if (g.isDirected()) {
-        for (size_t i = 0; i < numNodes; ++i) {
-            for (size_t jar = 0; jar < numNodes; ++jar) {
-                if (adjMatrix[i][jar] != 0 && adjMatrix[jar][i] == 0) {
-                    adjMatrix[jar][i] = adjMatrix[i][jar];
-                } else if (adjMatrix[i][jar] == 0 && adjMatrix[jar][i] != 0) {
-                    adjMatrix[i][jar] = adjMatrix[jar][i];
-                }
-            }
+    // Adds two graphs
+    Graph Graph::operator+(const Graph &other) const {
+        if (other.adjacencyMatrix.empty()) {
+            throw std::invalid_argument("The graph cannot be empty");
         }
-    }
-
-    vector<int> colorArr(numNodes, -1); // Initialize color array for nodes
-    std::vector<size_t> setA, setB; // Two sets for bipartite graph
-
-    // BFS to check if graph is bipartite
-    for (size_t i = 0; i < numNodes; i++) {
-        if (colorArr[i] == -1) {
-            std::queue<size_t> q;
-            q.push(i);
-            colorArr[i] = 1; // Assign first color
-
-            while (!q.empty()) {
-                size_t u = q.front();
-                q.pop();
-                std::vector<size_t> neighbors = g.getNeighbors(u); // Get neighbors of u
-
-                for (size_t v : neighbors) {
-                    if (colorArr[v] == -1) {
-                        colorArr[v] = 1 - colorArr[u]; // Assign alternate color
-                        q.push(v);
-                    } else if (colorArr[v] == colorArr[u]) {
-                        return "0"; // If same color, graph is not bipartite
-                    }
-                }
-            }
-        }
-    }
-
-    // Separate nodes into two sets
-    for (size_t i = 0; i < numNodes; i++) {
-        if (colorArr[i] == 1) {
-            setA.push_back(i);
-        } else {
-            setB.push_back(i);
-        }
-    }
-
-    // Format the result string
-    std::string result = "The graph is bipartite: A={";
-    for (size_t i = 0; i < setA.size(); i++) {
-        result += std::to_string(setA[i]);
-        if (i != setA.size() - 1) {
-            result += ", ";
-        }
-    }
-    result += "}, B={";
-    for (size_t i = 0; i < setB.size(); i++) {
-        result += std::to_string(setB[i]);
-        if (i != setB.size() - 1) {
-            result += ", ";
-        }
-    }
-    result += "}";
-    return result;
-}
-
-bool Algorithms::isCyclic(vector<bool>& visited, size_t v, std::vector<bool>& stack, std::vector<size_t>& parent, const Graph& g, std::vector<size_t>& cyclePath) {
-    visited[v] = true; // Mark the current node as visited
-    stack[v] = true; // Add the current node to the recursion stack
-    bool isDirected = g.isDirected(); // Check if the graph is directed
-    size_t numNodes = g.size(); // Number of nodes in the graph
-
-    // Check all adjacent vertices
-    for (size_t i = 0; i < numNodes; i++) {
-        if (g.haveEdge(v, i)) { // If there's an edge from v to i
-            if (!visited[i]) { // If the adjacent vertex is not visited
-                parent[i] = v; // Set the parent of the adjacent vertex
-                if (isCyclic(visited, i, stack, parent, g, cyclePath)) {
-                    return true; // If a cycle is detected, return true
-                }
-            } else if ((isDirected && stack[i]) || (!isDirected && stack[i] && parent[v] != i)) {
-                // If a cycle is detected, trace back to print the cycle
-                cyclePath.push_back(i);
-                for (size_t p = v; p != i; p = parent[p]) {
-                    cyclePath.push_back(p);
-                }
-                cyclePath.push_back(i); // Complete the cycle by adding the start node again
-                std::reverse(cyclePath.begin(), cyclePath.end());
-
-                // Print the cycle path
-                std::cout << "Cycle detected: ";
-                for (size_t jar = 0; jar < cyclePath.size(); jar++) {
-                    std::cout << cyclePath[jar];
-                    if (jar < cyclePath.size() - 1) std::cout << " -> ";
-                }
-                std::cout << std::endl;
-                return true;
-            }
-        }
-    }
-
-    stack[v] = false; // Remove the vertex from the recursion stack
-    return false;
-}
-
-bool Algorithms::isContainsCycle(const Graph& g) {
-    size_t numNodes = g.size(); // Number of nodes in the graph
-    vector<size_t> parent(numNodes, SIZE_MAX); // Parent array to store the parent of each node
-    vector<size_t> cyclePath; // To store the path of the cycle
-    vector<bool> visited(numNodes, false); // Visited array to mark visited nodes
-    vector<bool> stack(numNodes, false); // Stack to keep track of the recursion stack
-
-    // Check for cycles in different DFS trees
-    for (size_t i = 0; i < numNodes; i++) {
-        if (!visited[i]) {
-            if (isCyclic(visited, i, stack, parent, g, cyclePath)) {
-                return true; // If a cycle is detected, return true
-            }
-        }
-    }
-    return false; // If no cycle is detected, return false
-}
-
-std::string Algorithms::negativeCycle(const Graph& g) {
-    size_t n = g.size(); // Number of nodes in the graph
-    std::vector<int> distance(n, INT_MAX); // Distance vector initialized to infinite
-    std::vector<int> pred(n, -1); // Predecessor array initialized to -1
-    int cycle_start = -1; // Variable to store the start of the cycle
-
-    // Assume the source vertex is 0 for checking the negative cycle
-    distance[0] = 0;
-
-    // Bellman-Ford algorithm to find shortest paths
-    for (size_t i = 0; i < n; ++i) {
-        cycle_start = -1;
-        for (size_t u = 0; u < n; ++u) {
-            for (size_t v = 0; v < n; ++v) {
-                if (g.getAdjacencyMatrix()[u][v] != 0) { // Check if there is an edge from u to v
-                    // Relax the edge
-                    int new_distance = distance[u] + g.getAdjacencyMatrix()[u][v];
-                    if (new_distance < distance[v]) { // If new distance is shorter, update distance and predecessor
-                        distance[v] = new_distance;
-                        pred[v] = u;
-                        cycle_start = v; // Update cycle start
-                    }
-                }
-            }
-        }
-    }
-
-    vector<int> cycle; // Vector to store the cycle
-    if (cycle_start != -1) { // If a cycle is detected
-        // We found a negative cycle
-        // Go n steps back to make sure we are in the cycle
-        int v = cycle_start;
+        check_same_size(other);
+        size_t n = adjacencyMatrix.size();
+        std::vector<std::vector<int>> result(n, std::vector<int>(n, 0));
         for (size_t i = 0; i < n; ++i) {
-            v = pred[(size_t)v];
-        }
-
-        // Add vertices to the cycle
-        for (int u = v;; u = pred[(size_t)u]) {
-            cycle.push_back(u);
-            if (u == v && cycle.size() > 1) { // Break when we complete the cycle
-                break;
+            for (size_t j = 0; j < n; ++j) {
+                result[i][j] = adjacencyMatrix[i][j] + other.adjacencyMatrix[i][j];
             }
         }
-        reverse(cycle.begin(), cycle.end()); // Reverse to get the correct order
-
-        // Construct the cycle path string
-        std::string cyclePath = "Cycle detected: ";
-        for (int i = cycle.size() - 1; i >= 0; --i) {
-            cyclePath += std::to_string(cycle[(size_t)i]);
-            if (i > 0) {
-                cyclePath += " -> ";
-            }
-        }
-        return cyclePath; // Return the cycle path
+        return Graph(result);
     }
 
-    return "No negative cycle found."; // Return if no negative cycle is found
+    // Adds another graph to this graph
+    Graph &Graph::operator+=(const Graph &other) {
+        if (other.adjacencyMatrix.empty()) {
+            throw std::invalid_argument("The graph cannot be empty");
+        }
+        check_same_size(other);
+        size_t n = adjacencyMatrix.size();
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                adjacencyMatrix[i][j] += other.adjacencyMatrix[i][j];
+            }
+        }
+        return *this;
+    }
+
+    // Unary plus operator
+    Graph Graph::operator+() const {
+        return *this;
+    }
+
+    // Subtracts another graph from this graph
+    Graph Graph::operator-(const Graph &other) const {
+        check_same_size(other);
+        size_t n = adjacencyMatrix.size();
+        std::vector<std::vector<int>> result(n, std::vector<int>(n, 0));
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                result[i][j] = adjacencyMatrix[i][j] - other.adjacencyMatrix[i][j];
+            }
+        }
+        return Graph(result);
+    }
+
+    // Subtracts another graph from this graph and assigns the result to this graph
+    Graph &Graph::operator-=(const Graph &other) {
+        check_same_size(other);
+        size_t n = adjacencyMatrix.size();
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                adjacencyMatrix[i][j] -= other.adjacencyMatrix[i][j];
+            }
+        }
+        return *this;
+    }
+
+    // Unary minus operator
+    Graph Graph::operator-() const {
+        size_t n = adjacencyMatrix.size();
+        std::vector<std::vector<int>> result(n, std::vector<int>(n, 0));
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                result[i][j] = -adjacencyMatrix[i][j];
+            }
+        }
+        return Graph(result);
+    }
+
+    // Equality operator
+    bool Graph::operator==(const Graph &other) const {
+        // Check if the adjacency matrices are equal
+        if (adjacencyMatrix == other.adjacencyMatrix) {
+            return true;
+        }
+
+        // Check if neither graph is less than the other
+        if (!(adjacencyMatrix < other.adjacencyMatrix) && !(other.adjacencyMatrix < adjacencyMatrix)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Inequality operator
+    bool Graph::operator!=(const Graph &other) const {
+        return !(*this == other);
+    }
+
+    // Counts the number of edges in the graph
+    size_t Graph::countEdges() const {
+        size_t count = 0;
+        for (const auto &row : this->adjacencyMatrix) {
+            for (int val : row) {
+                if (val != 0) {
+                    count++;
+                }
+            }
+        }
+        return count / 2; // Assuming undirected graph, each edge is counted twice
+    }
+
+    // Less-than operator
+    bool Graph::operator<(const Graph &other) const {
+        size_t thisEdges = this->countEdges();
+        size_t otherEdges = other.countEdges();
+        if (thisEdges != otherEdges) {
+            return thisEdges < otherEdges;
+        }
+
+        // If number of edges is the same, compare number of vertices
+        if (this->size() != other.size()) {
+            return this->size() < other.size();
+        }
+
+        // If number of edges and vertices are the same, perform element-wise comparison
+        for (size_t i = 0; i < this->size(); ++i) {
+            for (size_t j = 0; j < this->size(); ++j) {
+                if (this->adjacencyMatrix[i][j] != other.adjacencyMatrix[i][j]) {
+                    return this->adjacencyMatrix[i][j] < other.adjacencyMatrix[i][j];
+                }
+            }
+        }
+        return false;
+    }
+
+    // Less-than-or-equal operator
+    bool Graph::operator<=(const Graph &other) const {
+        return *this < other || *this == other;
+    }
+
+    // Greater-than operator
+    bool Graph::operator>(const Graph &other) const {
+        if (other.adjacencyMatrix.empty()) {
+            throw std::invalid_argument("The graph to compare with does not exist.");
+        }
+        return !(*this <= other);
+    }
+
+    // Greater-than-or-equal operator
+    bool Graph::operator>=(const Graph &other) const {
+        return !(*this < other);
+    }
+
+    // Prefix increment operator
+    Graph &Graph::operator++() {
+        size_t n = adjacencyMatrix.size();
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                adjacencyMatrix[i][j]++;
+            }
+        }
+        return *this;
+    }
+
+    // Postfix increment operator
+    Graph Graph::operator++(int) {
+        Graph temp = *this;
+        ++(*this);
+        return temp;
+    }
+
+        // Prefix decrement operator
+    Graph &Graph::operator--() {
+        size_t n = adjacencyMatrix.size();
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                adjacencyMatrix[i][j]--;
+            }
+        }
+        return *this;
+    }
+
+    // Postfix decrement operator
+    Graph Graph::operator--(int) {
+        if (adjacencyMatrix.empty()) throw std::invalid_argument("The graph cannot be empty");
+        Graph temp = *this;
+        --(*this);
+        return temp;
+    }
+
+    // Divides all elements of the adjacency matrix by a scalar
+    Graph &Graph::operator/=(int scalar) {
+        if (scalar != 0) {
+            for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
+                for (size_t j = 0; j < adjacencyMatrix[i].size(); ++j) {
+                    adjacencyMatrix[i][j] /= scalar;
+                }
+            }
+        }
+        return *this;
+    }
+
+    // Multiplies all elements of the adjacency matrix by a scalar
+    Graph &Graph::operator*=(int scalar) {
+        for (size_t i = 0; i < adjacencyMatrix.size(); ++i) {
+            for (size_t j = 0; j < adjacencyMatrix[i].size(); ++j) {
+                adjacencyMatrix[i][j] *= scalar;
+            }
+        }
+        return *this;
+    }
+
+    // Multiplies two graphs
+    Graph Graph::operator*(const Graph &other) const {
+        check_same_size(other);
+        size_t n = adjacencyMatrix.size();
+        std::vector<std::vector<int>> result(n, std::vector<int>(n, 0));
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                if (i != j) {
+                    for (size_t k = 0; k < n; ++k) {
+                        result[i][j] += adjacencyMatrix[i][k] * other.adjacencyMatrix[k][j];
+                    }
+                }
+            }
+        }
+        return Graph(result);
+    }
+
+    // Stream insertion operator for printing the graph
+    ostream &operator<<(ostream &os, const Graph &graph) {
+        if (graph.getAdjacencyMatrix().empty()) throw std::invalid_argument("The graph cannot be empty");
+        size_t n = graph.getAdjacencyMatrix().size();
+        for (size_t i = 0; i < n; ++i) {
+            os << "[";
+            for (size_t j = 0; j < n; ++j) {
+                os << graph.getA(i, j);
+                if (j < n - 1) {
+                    os << ", ";
+                }
+            }
+            os << "]";
+            os << "\n";
+        }
+        return os;
+    }
+
 }
 
-
-
-
-
-
-
-
+ 
