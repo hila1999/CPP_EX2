@@ -26,22 +26,6 @@ TEST_CASE("Test graph addition")
     CHECK(g3.getAdjacencyMatrix() == expectedGraph);
 }
 
-// TEST_CASE("Test graph addition with different dimensions")
-// {
-//     ariel::Graph g1;
-//     vector<vector<int>> graph = {
-//         {0, 1, 0},
-//         {1, 0, 1},
-//         {0, 1, 0}};
-//     g1.loadGraph(graph);
-//     ariel::Graph g2;
-//     vector<vector<int>> weightedGraph = {
-//         {0, 1, 1, 1},
-//         {1, 0, 2, 1},
-//         {1, 2, 0, 1}};
-//     g2.loadGraph(weightedGraph);
-//     CHECK_THROWS_AS(g1 + g2, std::runtime_error);
-// }
 TEST_CASE("Test graph addition with empty graph")
 {
     ariel::Graph g1;
@@ -848,7 +832,7 @@ TEST_CASE("Test operator<< with non-empty graph")
     g.loadGraph(graph);
     stringstream ss;
     ss << g;
-    string expectedOutput = "[0, 1, 0]\n[1, 0, 1]\n[0, 1, 0]\n";
+    string expectedOutput = "[0, 1, 0]\n[1, 0, 1]\n[0, 1, 0]\n\n";
     CHECK(ss.str() == expectedOutput);
 }
 
@@ -862,7 +846,7 @@ TEST_CASE("Test operator<< with negative values")
     g.loadGraph(graph);
     stringstream ss;
     ss << g;
-    string expectedOutput = "[0, -1, 0]\n[-1, 0, -1]\n[0, -1, 0]\n";
+    string expectedOutput = "[0, -1, 0]\n[-1, 0, -1]\n[0, -1, 0]\n\n";
     CHECK(ss.str() == expectedOutput);
 }
 

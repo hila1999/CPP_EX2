@@ -352,6 +352,7 @@ size_t Graph::countEdges() const
             os << "]";
             os << "\n";
         }
+        os << "\n";
         return os;
     }
 
