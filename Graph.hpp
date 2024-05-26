@@ -24,6 +24,7 @@ namespace ariel {
         void loadGraph(const std::vector<std::vector<int>>& matrix);
         void printGraph() const;
         bool isDirected() const;
+        
         std::vector<std::vector<int>> getAdjMatrix();
         const std::vector<std::vector<int>>& getAdjacencyMatrix() const {
             if(adjacencyMatrix.empty())
